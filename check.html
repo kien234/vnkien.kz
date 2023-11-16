@@ -1,0 +1,104 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử chuyển tiền </title>
+
+    <!-- Thêm CSS -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        p {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Lịch sử chuyển tiền</h2>
+    <button onclick="checkMessages()">Check</button>
+
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function checkMessages() {
+            // Sử dụng ID chat cụ thể (đây là một ví dụ)
+            var chatId = -1001944572969; // Thay thế bằng ID chat thực của bạn
+            // Thay thế 'YOUR_BOT_TOKEN' bằng token của bot bạn đã tạo.
+            var botToken = '6416487576:AAGeK1DedNa4Xr7kVq3dMQhEy1zwA_2wrvc';
+
+            // Biểu thức chính quy để lọc tin nhắn
+            var regexPattern = /VND | TK: MBBank /;
+
+            // Gửi yêu cầu lấy tin nhắn đến Telegram API
+            axios.post(`https://api.telegram.org/bot${botToken}/getUpdates`, {
+                offset: -1,
+                limit: 1,
+                chat_id: chatId
+            })
+                .then(function (response) {
+                    var resultDiv = document.getElementById('result');
+                    if (response.data.ok) {
+                        // Lấy nội dung tin nhắn từ phản hồi
+                        var messageText = response.data.result[0].message.text;
+
+                        // Kiểm tra xem tin nhắn có khớp với biểu thức chính quy không
+                        if (regexPattern.test(messageText)) {
+                            resultDiv.innerHTML = `Đây có phải giao dịch của bạn\n<p>Giao Dịch:${messageText}</p>\n  nếu không phải \n hãy chờ và thử check lại`;
+                        } else {
+                            // Hiển thị thông báo lỗi nếu tin nhắn không khớp
+                            resultDiv.innerHTML = '<p>Không có tin nhắn phù hợp.</p>';
+                        }
+                    } else {
+                        // Hiển thị lỗi nếu có
+                        resultDiv.innerHTML = `<p>Error: ${response.data.description}</p>`;
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    alert('Có lỗi xảy ra khi gửi yêu cầu.');
+                });
+        }
+    </script>
+
+</body>
+
+</html>

